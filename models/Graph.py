@@ -118,10 +118,11 @@ class Graph:
 
 
     def BFS(self, initial_node):
+        initial_node = self.getNodeByName(initial_node)
         visited_nodes = []
 
         if initial_node in self.nodes:
-            queue = [initial_node]
+            queue = [initial_node.name]
             
             while queue:
                 _pivot = queue.pop(0)

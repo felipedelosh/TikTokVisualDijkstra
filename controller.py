@@ -63,7 +63,9 @@ class Controller:
             for e in data.get("edges", []):
                 self.graph.addEdge(e["from"], e["to"], e["weight"])
 
-            print(self.graph.DFS("F"))
+            print(self.graph.BFS("A"))
+            print(self.graph.BFS("F"))
+            print(self.graph.BFS("Z"))
             return True
         except:
             return False
