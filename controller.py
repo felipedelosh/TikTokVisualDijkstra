@@ -65,11 +65,22 @@ class Controller:
             # DRAW CONECTIONS AND LABELS
             edge_color = "white"
             weight_color = "white"
+            _control_not_draw_duplicate_edges = []
             for a_name, vecinos in self.graph.edges.items():
                 a = self.graph.getNodeByName(a_name)
 
                 for b_name, w in vecinos:
                     b = self.graph.getNodeByName(b_name)
+                    w = int(w)
+
+                    # No DRAW round trip
+                    _control = f"{a_name}:{b_name}:{w}"
+                    if _control not in _control_not_draw_duplicate_edges:
+                        _control_not_draw_duplicate_edges.append(_control)
+
+                    if f"{b_name}:{a_name}:{w}" in _control_not_draw_duplicate_edges:
+                        continue
+
                     self.canvas.create_line(a.x, a.y, b.x, b.y, fill=edge_color, width=2)
                     mx, my = (a.x + b.x) / 2, (a.y + b.y) / 2
                     dx, dy = b.x - a.x, b.y - a.y
@@ -91,7 +102,7 @@ class Controller:
                 x0, y0, x1, y1 = _x - r, _y - r, _x + r, _y + r
                 self.canvas.create_oval(x0, y0, x1, y1, fill=node_fill_color, outline=node_outline_color, width=2)
                 self.canvas.create_text(_x, _y, text=_name, fill=node_name_text_color, font=("Segoe UI", 12, "bold"))
-
+            print(_control_not_draw_duplicate_edges)
             return True
         
         return False
