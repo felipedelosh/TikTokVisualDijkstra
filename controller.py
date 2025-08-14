@@ -102,7 +102,7 @@ class Controller:
                 x0, y0, x1, y1 = _x - r, _y - r, _x + r, _y + r
                 self.canvas.create_oval(x0, y0, x1, y1, fill=node_fill_color, outline=node_outline_color, width=2)
                 self.canvas.create_text(_x, _y, text=_name, fill=node_name_text_color, font=("Segoe UI", 12, "bold"))
-            print(_control_not_draw_duplicate_edges)
+
             return True
         
         return False
