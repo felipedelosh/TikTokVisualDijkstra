@@ -4,6 +4,7 @@ FelipedelosH
 """
 import os
 from os import scandir
+import math
 import json
 from models.Graph import Graph
 from models.Node import Node
@@ -61,6 +62,24 @@ class Controller:
         Draw NAME(x, y)
         """
         if self.graph:
+            # DRAW CONECTIONS AND LABELS
+            edge_color = "white"
+            weight_color = "white"
+            for a_name, vecinos in self.graph.edges.items():
+                a = self.graph.getNodeByName(a_name)
+
+                for b_name, w in vecinos:
+                    b = self.graph.getNodeByName(b_name)
+                    self.canvas.create_line(a.x, a.y, b.x, b.y, fill=edge_color, width=2)
+                    mx, my = (a.x + b.x) / 2, (a.y + b.y) / 2
+                    dx, dy = b.x - a.x, b.y - a.y
+                    long = math.hypot(dx, dy) or 1
+                    off = 10
+                    px, py = -dy / long * off, dx / long * off
+                    self.canvas.create_text(mx + px, my + py, text=str(w), fill=weight_color, font=("Segoe UI", 10, "bold"))
+
+
+            # DRAW NODES
             r = 24
             node_fill_color = "blue"
             node_outline_color = "#333333"
