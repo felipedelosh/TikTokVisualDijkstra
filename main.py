@@ -16,6 +16,8 @@ class Software:
         self.controller = Controller(self.canvas)
         self.lblTitle = Label(self.canvas, text="Dijkstra's Algorithm by FelipedelosH", bg="black", fg="white")
         self.lblGraphSelector = Label(self.canvas, text="Graph: ", bg="black", fg="white")
+        _textToMsM = self.controller.textMessageToDisplay
+        self.lblMessage = Label(self.canvas, text=_textToMsM, bg="black", fg="white", font=("Segoe UI", 20, "bold"), wraplength=320, justify="center")
         _graphsOptions = self.controller.loadGraphFiles()
         self.comboGraph = ttk.Combobox(self.canvas, values=_graphsOptions, state="readonly")
         self.comboGraph.current(0)
@@ -32,6 +34,7 @@ class Software:
         self.canvas.place(x=0, y=0)
         self.lblTitle.place(x=self.controller.w * 0.23, y=self.controller.h*0.03)
         self.lblGraphSelector.place(x=self.controller.w * 0.09, y=self.controller.h*0.07)
+        self.lblMessage.place(x=self.controller.w * 0.14, y=self.controller.h*0.15)
         self.comboGraph.place(x=self.controller.w * 0.22, y=self.controller.h*0.07, width=self.controller.h*0.28)
         self.btnRunDJ.place(x=self.controller.w * 0.758, y=self.controller.h*0.068)
         
@@ -39,7 +42,7 @@ class Software:
         self.window.mainloop()
 
     def _refreshWindow(self):
-        pass
+        self.lblMessage['text'] = self.controller.textMessageToDisplay
         self.window.after(60, self._refreshWindow)
 
     def _runDijkstra(self):

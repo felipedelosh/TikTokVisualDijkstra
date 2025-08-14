@@ -20,6 +20,7 @@ class PaintMode(Enum):
 class Controller:
     def __init__(self, canvas):
         self.path = str(os.path.dirname(os.path.abspath(__file__)))
+        self.textMessageToDisplay = "Select a GRAPH AND press RUN to LOAD"
         self.canvas = canvas
         self.graph = None
         self._graphsPaths = f"{self.path}/INPUT"
@@ -75,9 +76,11 @@ class Controller:
             return False
         
         if self.mode == PaintMode.ANIMATION_INTRO:
+            self.textMessageToDisplay = ""
             self.animateIntro(duration_ms=2000, steps=45)
             return True
         elif self.mode == PaintMode.DRAW:
+            self.textMessageToDisplay = "Click TO Select Origin."
             return self.drawGraph()
         elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
             self.animateDijkstra()
