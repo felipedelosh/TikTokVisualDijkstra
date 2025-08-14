@@ -18,7 +18,7 @@ class Software:
         _graphsOptions = self.controller.loadGraphFiles()
         self.comboGraph = ttk.Combobox(self.canvas, values=_graphsOptions, state="readonly")
         self.comboGraph.current(0)
-        self.btnRunDJ = Button(self.canvas, text="RUN DIJKSTRA", bg="red", fg="black", command=self._runDijkstra)
+        self.btnRunDJ = Button(self.canvas, text="RUN DIJKSTRA", bg="green", fg="black", command=self._runDijkstra)
         
         self._renderWindow()
 
@@ -42,7 +42,15 @@ class Software:
         self.window.after(60, self._refreshWindow)
 
     def _runDijkstra(self):
-        print("Aqui")
+        _filename_graph = self.comboGraph.get()
+        isLoad  = self.controller.loadGraph(_filename_graph)
+
+        if isLoad:
+            self.btnRunDJ['bg'] = "green"
+        else:
+            self.btnRunDJ['bg'] = "red"
+            return
+
 
 
 s = Software()

@@ -4,7 +4,9 @@ FelipedelosH
 """
 import os
 from os import scandir
+import json
 from models.Graph import Graph
+from models.Node import Node
 
 class Controller:
     def __init__(self, canvas):
@@ -14,8 +16,6 @@ class Controller:
         self._graphsPaths = f"{self.path}/INPUT"
         self.w = 405
         self.h = 720
-
-        self._loadGraphs()
 
     def getWindowSize(self):
         return f"{self.w}x{self.h}"
@@ -33,5 +33,19 @@ class Controller:
 
         return _filesNames
     
-    def _loadGraphs(self):
-        pass
+    def loadGraph(self, filename):
+        """
+        Enter a filename example:graph.json and charge.
+        """
+        file_path = os.path.join(self._graphsPaths, filename)
+
+        try:
+            with open(file_path, "r") as f:
+                data = json.load(f)
+
+            print(data)
+
+            return True
+        except:
+            return False
+
