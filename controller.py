@@ -43,7 +43,13 @@ class Controller:
             with open(file_path, "r") as f:
                 data = json.load(f)
 
-            print(data)
+            self.graph = Graph()
+            for n in data.get("nodes", []):
+                node_obj = Node(n["name"], n["x"], n["y"])
+                self.graph.addNode(node_obj)
+
+            for e in data.get("edges", []):
+                self.graph.addEdge(e["from"], e["to"], e["weight"])
 
             return True
         except:

@@ -16,16 +16,32 @@ class Graph:
 
     
     def addEdge(self, A, B, W):
+        A = self.getNodeByName(A)
+        B = self.getNodeByName(B)
+        W = float(W)
+
+        print(f"Para el nodo INCIO: {A.name}: {A} , Para el nodo DESTINO: {B.name}: {B}")
         if A in self.nodes and B in self.nodes and W >= 0:
-            if A not in self.edges:
-                self.edges[A] = []
+            if A.name not in self.edges:
+                self.edges[A.name] = []
 
             if B not in self.edges:
-                self.edges[B] = []
+                self.edges[B.name] = []
 
-            self.edges[A].append((B, W))
-            self.edges[B].append((A, W))
+            self.edges[A.name].append((B.name, W))
+            self.edges[B.name].append((A.name, W))
 
+    def getNodeByName(self, name):
+        node = None
+
+        try:
+            for i in self.nodes:
+                if i.name == name:
+                    return i
+        except:
+            return node
+        
+        return node
 
     def deleteNode(self, x):
         if x in self.nodes:
@@ -268,3 +284,23 @@ class Graph:
                 akumulated_distance = dijkstra_definitive_candidates[best_candidate][0]
 
         return [dijkstra, dijkstra_definitive_candidates] 
+
+
+    def __str__(self):
+        txt = f"GRAPH BY CRAZY MAN\n"
+        txt = txt + f"Total Nodes: {len(self.nodes)}\n"
+        txt = txt + f"Total Edges: {len(self.edges)}\n"
+        
+        _nodesNames = ""
+        for i in self.nodes:
+            _nodesNames = _nodesNames + f"{i.name} "
+
+        txt = txt + f"Nodes: {_nodesNames}\n"
+
+        _conections = ""
+        for i in self.edges:
+            _conections = _conections + f"{i}: {self.edges[i]}"
+        txt = txt + f"Conections: {_conections}\n"
+
+
+        return txt 
