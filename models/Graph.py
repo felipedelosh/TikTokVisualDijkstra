@@ -78,13 +78,15 @@ class Graph:
         """
         return if A have directed conection with B
         """
-        if nodeA not in self.edges or nodeB not in self.nodes:
+        nodeA = self.getNodeByName(nodeA)
+        nodeB = self.getNodeByName(nodeB)
+        if nodeA.name not in self.edges or nodeB.name not in self.edges:
             return False
         
-        for i in self.edges[nodeA]:
-            if i[0] == nodeB:
+        for i in self.edges[nodeA.name]:
+            if i[0] == nodeB.name:
                 return True
-            
+
         return False
     
 

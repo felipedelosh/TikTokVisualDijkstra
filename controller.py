@@ -63,11 +63,7 @@ class Controller:
             for e in data.get("edges", []):
                 self.graph.addEdge(e["from"], e["to"], e["weight"])
 
-            #print("Grafo antes:")
-            #print(self.graph)
-            #print("Borrar")
-            self.graph.deleteNode("B")
-            #print(self.graph)
+            print(self.graph.isNeighbor("F", "G"))
             return True
         except:
             return False
