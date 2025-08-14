@@ -55,16 +55,12 @@ class Software:
         
         self.controller.set_mode(PaintMode.ANIMATION_INTRO)
         isPainted = self.controller.render()
-        #isPainted = self.controller.drawGraph()
 
-        # if isPainted:
-        #     self.btnRunDJ['bg'] = "green"
-        # else:
-        #     self.btnRunDJ['bg'] = "red"
-        #     return
-
-        print(self.controller.graph)
-
+        if isPainted:
+            self.btnRunDJ['bg'] = "green"
+        else:
+            self.btnRunDJ['bg'] = "red"
+            return
 
 
 s = Software()

@@ -42,16 +42,22 @@ class Graph:
         
         return node
 
-    def deleteNode(self, x):
-        if x in self.nodes:
-            self.nodes.remove(x)
 
-            if x in self.edges:
-                del self.edges[x]
+    def deleteNode(self, name):
+        node = self.getNodeByName(name)
+
+        if not node:
+            return
+
+        if node in self.nodes:
+            self.nodes.remove(node)
+            
+            if node.name in self.edges:
+                del self.edges[node.name]
 
             for u, v in self.edges.items():
                 for k in v:
-                    if k[0] == x:
+                    if k[0] == node.name:
                         v.remove(k)
 
 

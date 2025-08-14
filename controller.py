@@ -63,6 +63,11 @@ class Controller:
             for e in data.get("edges", []):
                 self.graph.addEdge(e["from"], e["to"], e["weight"])
 
+            #print("Grafo antes:")
+            #print(self.graph)
+            #print("Borrar")
+            self.graph.deleteNode("B")
+            #print(self.graph)
             return True
         except:
             return False
@@ -75,13 +80,12 @@ class Controller:
             return False
         
         if self.mode == PaintMode.ANIMATION_INTRO:
-            self.animateIntro(duration_ms=900, steps=45)
+            self.animateIntro(duration_ms=2000, steps=45)
             return True
         elif self.mode == PaintMode.DRAW:
             return self.drawGraph()
         elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
-            # Llama aquí a tu futura animación paso a paso de Dijkstra
-            # self.animateDijkstra(...)
+            self.animateDijkstra()
             return True
         return False
         
@@ -216,6 +220,9 @@ class Controller:
             return True
         
         return False
+    
+    def animateDijkstra(self):
+        print("Lokoooooo Graficando Dj")
 
     def clearCanvas(self):
         self.canvas.delete("all")
