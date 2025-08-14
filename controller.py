@@ -231,6 +231,10 @@ class Controller:
         return False
     
     def _on_click_draw(self, event):
+        if self.graph:
+            self.selectNodeWithClickEvent(event)
+
+    def selectNodeWithClickEvent(self, event):
         if self.mode != PaintMode.DRAW or not self._node_items:
             return
 
@@ -248,19 +252,43 @@ class Controller:
 
         if not picked_name:
             return 
+    
+        # ONLY SELECT ONE ITEM
+        if not self.selected_origin:
+            if self.selected_origin and self.selected_origin in self._node_items:
+                prev_oid, _ = self._node_items[self.selected_origin]
+                self.canvas.itemconfig(prev_oid, fill="blue", outline="#333333", width=2)
 
-        if self.selected_origin and self.selected_origin in self._node_items:
-            prev_oid, _ = self._node_items[self.selected_origin]
-            self.canvas.itemconfig(prev_oid, fill="blue", outline="#333333", width=2)
+            oid, _ = self._node_items[picked_name]
+            self.canvas.itemconfig(oid, fill="#ffcc00", outline="#ffa500", width=3)
 
-        oid, _ = self._node_items[picked_name]
-        self.canvas.itemconfig(oid, fill="#ffcc00", outline="#ffa500", width=3)
+            self.selected_origin = picked_name
+            self.textMessageToDisplay = f"Origin: {picked_name}. Now Select Destination..."
+        else:
+            if self.selected_origin == picked_name:
+                self.textMessageToDisplay = f"The Destination BE DIFERENT to: {picked_name}"
+                return
+            
+            self.selected_destination = picked_name
+            oid_dest, _ = self._node_items[self.selected_destination]
+            self.canvas.itemconfig(oid_dest, fill="#00ccff", outline="#00a0cc", width=3)
 
-        self.selected_origin = picked_name
-        self.textMessageToDisplay = f"Origin: {picked_name}. Now Select Destination..."
+            self.textMessageToDisplay = f"FROM: {self.selected_origin} >> TO: {self.selected_destination}"
+
+            self.canvas.unbind("<Button-1>")
+
+            self.canvas.after(600, lambda: (
+                self.set_mode(PaintMode.ANIMATION_DIJKSTRA),
+                self.animateDijkstra()
+            ))
+
     
     def animateDijkstra(self):
-        print("Lokoooooo Graficando Dj")
+        _ROUTE = self.graph.getBestRoute(self.selected_origin, self.selected_destination)
+        _TABLE = self.graph.getDijkstraTable(self.selected_origin)
+        print(_ROUTE)
+        print("=========")
+        print(_TABLE)
 
     def clearCanvas(self):
         self.canvas.delete("all")
