@@ -43,6 +43,7 @@ class Software:
         self.window.after(60, self._refreshWindow)
 
     def _runDijkstra(self):
+        self.btnRunDJ.config(state="disabled")
         _filename_graph = self.comboGraph.get()
         isLoad  = self.controller.loadGraph(_filename_graph)
 

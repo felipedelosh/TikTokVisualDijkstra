@@ -124,7 +124,9 @@ class Controller:
             if frame <= steps:
                 self.canvas.after(int(duration_ms / steps), step)
             else:
-                self.drawEdges()
+                self.clearCanvas()
+                self.set_mode(PaintMode.DRAW)
+                self.render()
 
         step()
 
