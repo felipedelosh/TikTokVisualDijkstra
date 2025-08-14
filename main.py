@@ -50,6 +50,14 @@ class Software:
         else:
             self.btnRunDJ['bg'] = "red"
             return
+        
+        isPainted = self.controller.drawGraph()
+
+        if isPainted:
+            self.btnRunDJ['bg'] = "green"
+        else:
+            self.btnRunDJ['bg'] = "red"
+            return        
 
 
 

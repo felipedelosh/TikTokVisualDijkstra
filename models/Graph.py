@@ -20,7 +20,6 @@ class Graph:
         B = self.getNodeByName(B)
         W = float(W)
 
-        print(f"Para el nodo INCIO: {A.name}: {A} , Para el nodo DESTINO: {B.name}: {B}")
         if A in self.nodes and B in self.nodes and W >= 0:
             if A.name not in self.edges:
                 self.edges[A.name] = []
