@@ -19,16 +19,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 ## :play_or_pause_button:How to execute a project
 
-Double click
+Double click in "main.py"
 
 ## :hammer_and_wrench:Tech.
 
-- code programing
-- framework
+- Python
+- Tkinter
 
 ## :warning:Warning.
 
-- limitations.
+- Develop in windows.
 
 ## Autor
 
