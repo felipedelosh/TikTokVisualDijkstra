@@ -63,7 +63,6 @@ class Controller:
             for e in data.get("edges", []):
                 self.graph.addEdge(e["from"], e["to"], e["weight"])
 
-            print(self.graph.getBestRoute("A", "H"))
             return True
         except:
             return False
