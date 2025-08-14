@@ -10,16 +10,16 @@ from tkinter import ttk
 
 class Software:
     def __init__(self):
-        self.controller = Controller()
         self.window = Tk()
         self.canvas = Canvas(self.window, bg="black", highlightthickness=0, bd=0)
+        self.controller = Controller(self.canvas)
         self.lblTitle = Label(self.canvas, text="Dijkstra's Algorithm by FelipedelosH", bg="black", fg="white")
         self.lblGraphSelector = Label(self.canvas, text="Graph: ", bg="black", fg="white")
         _graphsOptions = self.controller.loadGraphFiles()
         self.comboGraph = ttk.Combobox(self.canvas, values=_graphsOptions, state="readonly")
         self.comboGraph.current(0)
-        self.btnRunDJ = Button(self.canvas, text="RUN DIJKSTRA", bg="red", fg="black")
-
+        self.btnRunDJ = Button(self.canvas, text="RUN DIJKSTRA", bg="red", fg="black", command=self._runDijkstra)
+        
         self._renderWindow()
 
     def _renderWindow(self):
@@ -40,6 +40,9 @@ class Software:
     def _refreshWindow(self):
         pass
         self.window.after(60, self._refreshWindow)
+
+    def _runDijkstra(self):
+        print("Aqui")
 
 
 s = Software()

@@ -2,7 +2,7 @@
 FelipedelosH
 2025
 """
-from Node import *
+from models.Node import *
 
 class Graph:
     def __init__(self):
