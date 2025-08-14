@@ -24,7 +24,7 @@ class Graph:
             if A.name not in self.edges:
                 self.edges[A.name] = []
 
-            if B not in self.edges:
+            if B.name not in self.edges:
                 self.edges[B.name] = []
 
             self.edges[A.name].append((B.name, W))
@@ -288,18 +288,21 @@ class Graph:
     def __str__(self):
         txt = f"GRAPH BY CRAZY MAN\n"
         txt = txt + f"Total Nodes: {len(self.nodes)}\n"
-        txt = txt + f"Total Edges: {len(self.edges)}\n"
+        
         
         _nodesNames = ""
         for i in self.nodes:
             _nodesNames = _nodesNames + f"{i.name} "
 
-        txt = txt + f"Nodes: {_nodesNames}\n"
-
+        _counterConections = 0
         _conections = ""
         for i in self.edges:
+            _counterConections = _counterConections + len(self.edges[i])
             _conections = _conections + f"{i}: {self.edges[i]}"
-        txt = txt + f"Conections: {_conections}\n"
+        
 
+        txt = txt + f"Total Edges: {_counterConections}\n"
+        txt = txt + f"Nodes: {_nodesNames}\n"
+        txt = txt + f"Conections: {_conections}\n"
 
         return txt 

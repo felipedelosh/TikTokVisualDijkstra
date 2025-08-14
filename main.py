@@ -4,7 +4,8 @@ FelipedelosH
 
 Visual Efect Dijkstra
 """
-from controller import *
+from controller import Controller
+from controller import PaintMode
 from tkinter import *
 from tkinter import ttk
 
@@ -51,13 +52,17 @@ class Software:
             self.btnRunDJ['bg'] = "red"
             return
         
-        isPainted = self.controller.drawGraph()
+        self.controller.set_mode(PaintMode.ANIMATION_INTRO)
+        isPainted = self.controller.render()
+        #isPainted = self.controller.drawGraph()
 
-        if isPainted:
-            self.btnRunDJ['bg'] = "green"
-        else:
-            self.btnRunDJ['bg'] = "red"
-            return        
+        # if isPainted:
+        #     self.btnRunDJ['bg'] = "green"
+        # else:
+        #     self.btnRunDJ['bg'] = "red"
+        #     return
+
+        print(self.controller.graph)
 
 
 

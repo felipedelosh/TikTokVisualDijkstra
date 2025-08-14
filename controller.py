@@ -6,8 +6,16 @@ import os
 from os import scandir
 import math
 import json
+from enum import Enum, auto
 from models.Graph import Graph
 from models.Node import Node
+
+
+class PaintMode(Enum):
+    ANIMATION_INTRO = auto()
+    DRAW = auto()
+    ANIMATION_DIJKSTRA = auto()
+
 
 class Controller:
     def __init__(self, canvas):
@@ -17,6 +25,9 @@ class Controller:
         self._graphsPaths = f"{self.path}/INPUT"
         self.w = 405
         self.h = 720
+        self._node_items = {}
+        self._r_final = 24
+        self.mode = PaintMode.DRAW
 
     def getWindowSize(self):
         return f"{self.w}x{self.h}"
@@ -55,6 +66,103 @@ class Controller:
             return True
         except:
             return False
+        
+    def set_mode(self, mode: PaintMode):
+        self.mode = mode
+
+    def render(self):
+        if not self.graph:
+            return False
+        
+        if self.mode == PaintMode.ANIMATION_INTRO:
+            self.animateIntro(duration_ms=900, steps=45)
+            return True
+        elif self.mode == PaintMode.DRAW:
+            return self.drawGraph()
+        elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
+            # Llama aquí a tu futura animación paso a paso de Dijkstra
+            # self.animateDijkstra(...)
+            return True
+        return False
+        
+    def animateIntro(self, duration_ms=900, steps=45):
+        if not self.graph or not self.graph.nodes:
+            return
+
+        self.clearCanvas()
+        cx, cy = self.w // 2, self.h // 2
+
+        r0 = 2
+        self._node_items = {}
+        for n in self.graph.nodes:
+            oid = self.canvas.create_oval(cx - r0, cy - r0, cx + r0, cy + r0,fill="blue", outline="#333333", width=2, tags=("node",))
+            tid = self.canvas.create_text(cx, cy, text=n.name, fill="white", font=("Segoe UI", 12, "bold"), tags=("label",))
+            self._node_items[n.name] = (oid, tid)
+
+        def ease_out_back(t):
+            c1 = 1.70158
+            c3 = c1 + 1
+            return 1 + c3 * (t - 1) ** 3 + c1 * (t - 1) ** 2
+
+        frame = 0
+
+        def step():
+            nonlocal frame
+            p = frame / float(steps)
+            ep = ease_out_back(p)
+
+            for n in self.graph.nodes:
+                x = cx + (n.x - cx) * ep
+                y = cy + (n.y - cy) * ep
+                r = r0 + (self._r_final - r0) * ep
+
+                oid, tid = self._node_items[n.name]
+                self.canvas.coords(oid, x - r, y - r, x + r, y + r)
+                self.canvas.coords(tid, x, y)
+
+            frame += 1
+            if frame <= steps:
+                self.canvas.after(int(duration_ms / steps), step)
+            else:
+                self.drawEdges()
+
+        step()
+
+    def drawEdges(self):
+        if not self.graph or not self.graph.edges:
+            return
+
+        edge_color = "white"
+        weight_color = "white"
+
+        dibujadas = set()
+
+        nodes = {n.name: n for n in self.graph.nodes}
+
+        for a_name, vecinos in self.graph.edges.items():
+            a = nodes.get(a_name)
+            if a is None:
+                continue
+
+            for b_name, w in vecinos:
+                key = frozenset((a_name, b_name))
+                if key in dibujadas:
+                    continue
+
+                b = nodes.get(b_name)
+                if b is None:
+                    continue
+
+                self.canvas.create_line(a.x, a.y, b.x, b.y, fill=edge_color, width=2, tags=("edge",))
+
+                mx, my = (a.x + b.x) / 2.0, (a.y + b.y) / 2.0
+                dx, dy = b.x - a.x, b.y - a.y
+                longi = math.hypot(dx, dy) or 1.0
+                off = 10
+                px, py = -dy / longi * off, dx / longi * off
+                self.canvas.create_text(mx + px, my + py, text=str(int(w)), fill=weight_color, font=("Segoe UI", 10, "bold"), tags=("weight",))
+
+                dibujadas.add(key)
         
 
     def drawGraph(self):
@@ -107,3 +215,5 @@ class Controller:
         
         return False
 
+    def clearCanvas(self):
+        self.canvas.delete("all")
