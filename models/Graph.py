@@ -97,10 +97,11 @@ class Graph:
 
 
     def DFS(self, initial_node):
+        initial_node = self.getNodeByName(initial_node)
         visited_nodes = []
 
         if initial_node in self.nodes:
-            stack = [initial_node]
+            stack = [initial_node.name]
 
             while stack:
                 _pivot = stack.pop()
