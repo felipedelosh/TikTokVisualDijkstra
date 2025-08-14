@@ -29,6 +29,9 @@ class Controller:
         self._node_items = {}
         self._r_final = 24
         self.mode = PaintMode.DRAW
+        self.selected_origin = None
+        self.selected_destination = None
+
 
     def getWindowSize(self):
         return f"{self.w}x{self.h}"
@@ -81,6 +84,7 @@ class Controller:
             return True
         elif self.mode == PaintMode.DRAW:
             self.textMessageToDisplay = "Click TO Select Origin."
+            self.canvas.bind("<Button-1>", self._on_click_draw)
             return self.drawGraph()
         elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
             self.animateDijkstra()
@@ -207,17 +211,53 @@ class Controller:
             node_fill_color = "blue"
             node_outline_color = "#333333"
             node_name_text_color = "white"
+            self._node_items = {}
             for i in self.graph.nodes:
-                _name = i.name
-                _x = i.x
-                _y = i.y
+                _name, _x, _y = i.name, i.x, i.y
                 x0, y0, x1, y1 = _x - r, _y - r, _x + r, _y + r
-                self.canvas.create_oval(x0, y0, x1, y1, fill=node_fill_color, outline=node_outline_color, width=2)
-                self.canvas.create_text(_x, _y, text=_name, fill=node_name_text_color, font=("Segoe UI", 12, "bold"))
+                oid = self.canvas.create_oval(
+                    x0, y0, x1, y1,
+                    fill=node_fill_color, outline=node_outline_color, width=2,
+                    tags=("node", f"node:{_name}")
+                )
+                tid = self.canvas.create_text(
+                    _x, _y, text=_name, fill=node_name_text_color, font=("Segoe UI", 12, "bold"),
+                    tags=("label", f"label:{_name}")
+                )
+                self._node_items[_name] = (oid, tid)
 
             return True
         
         return False
+    
+    def _on_click_draw(self, event):
+        if self.mode != PaintMode.DRAW or not self._node_items:
+            return
+
+        x, y = event.x, event.y
+
+        hit = self.canvas.find_overlapping(x-1, y-1, x+1, y+1)
+        picked_name = None
+        for item in hit:
+            for t in self.canvas.gettags(item):
+                if t.startswith("node:"):
+                    picked_name = t.split(":", 1)[1]
+                    break
+            if picked_name:
+                break
+
+        if not picked_name:
+            return 
+
+        if self.selected_origin and self.selected_origin in self._node_items:
+            prev_oid, _ = self._node_items[self.selected_origin]
+            self.canvas.itemconfig(prev_oid, fill="blue", outline="#333333", width=2)
+
+        oid, _ = self._node_items[picked_name]
+        self.canvas.itemconfig(oid, fill="#ffcc00", outline="#ffa500", width=3)
+
+        self.selected_origin = picked_name
+        self.textMessageToDisplay = f"Origin: {picked_name}. Now Select Destination..."
     
     def animateDijkstra(self):
         print("Lokoooooo Graficando Dj")
