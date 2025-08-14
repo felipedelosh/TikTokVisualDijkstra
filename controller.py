@@ -62,17 +62,16 @@ class Controller:
         """
         if self.graph:
             r = 24
-            node_fill = "blue"
-            node_outline = "#333333"
+            node_fill_color = "blue"
+            node_outline_color = "#333333"
+            node_name_text_color = "white"
             for i in self.graph.nodes:
                 _name = i.name
                 _x = i.x
                 _y = i.y
                 x0, y0, x1, y1 = _x - r, _y - r, _x + r, _y + r
-                self.canvas.create_oval(x0, y0, x1, y1, fill=node_fill, outline=node_outline, width=2)
-
-                print(_name, _x, _y)
-
+                self.canvas.create_oval(x0, y0, x1, y1, fill=node_fill_color, outline=node_outline_color, width=2)
+                self.canvas.create_text(_x, _y, text=_name, fill=node_name_text_color, font=("Segoe UI", 12, "bold"))
 
             return True
         
