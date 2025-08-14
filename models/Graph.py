@@ -139,18 +139,20 @@ class Graph:
 
     def getBestRoute(self, origin, destination):
         _dijkstra_steps_info = []
+        origin = self.getNodeByName(origin)
+        destination = self.getNodeByName(destination)
 
         if origin != destination and origin in self.nodes and destination in self.nodes:
-            _dijkstra_definitive_candidates = self._makeDijkstraAlgVersionTabulated(origin)[1]
+            _dijkstra_definitive_candidates = self._makeDijkstraAlgVersionTabulated(origin.name)[1]
 
-            if origin in _dijkstra_definitive_candidates and destination in _dijkstra_definitive_candidates:
-                _dijkstra_steps_info = [destination] # Put Destination in route
+            if origin.name in _dijkstra_definitive_candidates and destination.name in _dijkstra_definitive_candidates:
+                _dijkstra_steps_info = [destination.name] # Put Destination in route
 
-                _pivot = _dijkstra_definitive_candidates[destination][1] # First Step
+                _pivot = _dijkstra_definitive_candidates[destination.name][1] # First Step
                 _dijkstra_steps_info.append(_pivot)
 
                 _counter = 0 # Controller infinite loop
-                while _pivot != origin:
+                while _pivot != origin.name:
                     if _counter >= len(_dijkstra_definitive_candidates):
                         return []
 
@@ -185,7 +187,8 @@ class Graph:
 
         def _init_dijkstra_table():
             nonlocal dijkstra
-            dijkstra = {i : [() for i in self.nodes] for i in self.nodes}
+            node_names = [n.name for n in self.nodes]
+            dijkstra = {name: [() for _ in node_names] for name in node_names}
 
             nonlocal start
             dijkstra[start][0] = (0, start)
