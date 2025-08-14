@@ -27,6 +27,7 @@ Double click in "main.py"
 
 - Python
 - Tkinter
+- Json
 
 ## :warning:Warning.
 
