@@ -21,7 +21,8 @@ class PaintMode(Enum):
 class Controller:
     def __init__(self, canvas):
         self.path = str(os.path.dirname(os.path.abspath(__file__)))
-        self.textMessageToDisplay = "Select a GRAPH AND press RUN to LOAD"
+        self.textMessageToDisplayTOP = "Select a GRAPH AND press RUN to LOAD"
+        self.textMessageToDisplayBOTTOM = "FelipedelosH"
         self.canvas = canvas
         self.graph = None
         self._graphsPaths = f"{self.path}/INPUT"
@@ -80,11 +81,11 @@ class Controller:
             return False
         
         if self.mode == PaintMode.ANIMATION_INTRO:
-            self.textMessageToDisplay = ""
+            self.textMessageToDisplayTOP = ""
             self.animateIntro(duration_ms=2000, steps=45)
             return True
         elif self.mode == PaintMode.DRAW:
-            self.textMessageToDisplay = "Click TO Select Origin."
+            self.textMessageToDisplayTOP = "Click TO Select Origin."
             self.canvas.bind("<Button-1>", self._on_click_draw)
             return self.drawGraph()
         elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
@@ -264,17 +265,17 @@ class Controller:
             self.canvas.itemconfig(oid, fill="#ffcc00", outline="#ffa500", width=3)
 
             self.selected_origin = picked_name
-            self.textMessageToDisplay = f"Origin: {picked_name}. Now Select Destination..."
+            self.textMessageToDisplayTOP = f"Origin: {picked_name}. Now Select Destination..."
         else:
             if self.selected_origin == picked_name:
-                self.textMessageToDisplay = f"The Destination BE DIFERENT to: {picked_name}"
+                self.textMessageToDisplayTOP = f"The Destination BE DIFERENT to: {picked_name}"
                 return
             
             self.selected_destination = picked_name
             oid_dest, _ = self._node_items[self.selected_destination]
             self.canvas.itemconfig(oid_dest, fill="#00ccff", outline="#00a0cc", width=3)
 
-            self.textMessageToDisplay = f"FROM: {self.selected_origin} >> TO: {self.selected_destination}"
+            self.textMessageToDisplayTOP = f"FROM: {self.selected_origin} >> TO: {self.selected_destination}"
 
             self.canvas.unbind("<Button-1>")
 
@@ -294,7 +295,7 @@ class Controller:
         blink_delay = 350
 
         self.canvas.delete("anim_edge")
-        self.textMessageToDisplay = "Running Dijkstra…"
+        self.textMessageToDisplayTOP = "Running Dijkstra…"
         time.sleep(1)
         
 
@@ -341,8 +342,8 @@ class Controller:
 
                 visited.append(pivot)
 
-                up_txt = ", ".join(f"{n}" for n,_,_ in updates) or "—"
-                self.textMessageToDisplay = f"Step {step}: visit {pivot} (d={dist}) • updates: {up_txt}"
+                up_txt = ", ".join(f"{n}" for n,_,_ in updates) or ""
+                self.textMessageToDisplayBOTTOM = f"STEP: {step}\nNODE:{pivot}\nDistance:{int(dist)}"
 
             self.canvas.after(step_delay, lambda: do_step(step+1))
 
@@ -353,9 +354,9 @@ class Controller:
                     self.canvas.delete("anim_edge")
                     for i in range(len(path)-1):
                         self._highlight_edge(path[i], path[i+1], color="#00ff66", width=5, tag="anim_edge")
-                    self.textMessageToDisplay = f"Shortest path: {' → '.join(path)}"
+                    self.textMessageToDisplayTOP = f"Shortest path: {' → '.join(path)}"
                 else:
-                    self.textMessageToDisplay = "No path found."
+                    self.textMessageToDisplayTOP = "No path found."
 
         do_step(0)
 
