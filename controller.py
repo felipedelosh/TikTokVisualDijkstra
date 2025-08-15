@@ -284,11 +284,36 @@ class Controller:
 
     
     def animateDijkstra(self):
-        _ROUTE = self.graph.getBestRoute(self.selected_origin, self.selected_destination)
-        _TABLE = self.graph.getDijkstraTable(self.selected_origin)
-        print(_ROUTE)
-        print("=========")
-        print(_TABLE)
+        _dijkstraTable = self.graph.getDijkstraTable(self.selected_origin)
+        _qtyCols = len(next(iter(_dijkstraTable.values())))
+        _visited = []
+
+        for step in range(_qtyCols):
+            best = None
+            for nodo, cols in _dijkstraTable.items():
+                if nodo in _visited:
+                    continue
+                val = cols[step]
+                if isinstance(val, tuple):          
+                    dist, prev = val
+                    if (best is None) or (dist < best[1]):
+                        best = (nodo, dist, prev)
+
+            updates = []
+            for nodo, cols in _dijkstraTable.items():
+                cur = cols[step]
+                prev = cols[step-1] if step > 0 else None
+                if isinstance(cur, tuple) and cur != prev:
+                    d, p = cur
+                    updates.append((nodo, d, p))
+
+            if best:
+                print(f"Paso {step}: visita {best[0]} (dist={best[1]}, prev={best[2]})")
+                if updates:
+                    print("actualizados:", ", ".join(f"{n}={d} via {p}" for n, d, p in updates))
+                _visited.append(best[0])
+            else:
+                break
 
     def clearCanvas(self):
         self.canvas.delete("all")
