@@ -4,7 +4,7 @@
 
 ![Banner](Docs/banner.png)
 <br>
-:construction: Status of project :construction:
+:construction: V1.0 :construction:
 <br><br>
 **TikTokVisualDijkstra** is an interactive visual application built with **Python** and **Tkinter** that allows you to load graphs from `.json` files and watch a step-by-step execution of the **Dijkstra algorithm**.  
 This project is designed for educational purposes, providing a graphical demonstration of how nodes are selected, how distances are updated, and how the shortest path between an origin and a destination is determined.
