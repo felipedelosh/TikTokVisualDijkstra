@@ -291,8 +291,8 @@ class Controller:
 
         steps = len(next(iter(table.values())))
         visited = []
-        step_delay = 1200 
-        blink_delay = 350
+        step_delay = 3000 
+        blink_delay = 600
 
         self.canvas.delete("anim_edge")
         self.textMessageToDisplayTOP = "Running Dijkstra…"
@@ -331,8 +331,8 @@ class Controller:
                 def blink_updates(on=True, left=2):
                     for n, _, _ in updates:
                         self._highlight_node(n,
-                            fill=("#00ccff" if on else "blue"),
-                            outline=("#00a0cc" if on else "#333333"),
+                            fill=("purple" if on else "blue"),
+                            outline=("violet" if on else "#333333"),
                             width=(3 if on else 2)
                         )
                     if left > 0:
@@ -343,7 +343,7 @@ class Controller:
                 visited.append(pivot)
 
                 up_txt = ", ".join(f"{n}" for n,_,_ in updates) or ""
-                self.textMessageToDisplayBOTTOM = f"STEP: {step}\nNODE:{pivot}\nDistance:{int(dist)}"
+                self.textMessageToDisplayBOTTOM = f"STEP: {step}\nNODE: {pivot}\nDistance: {int(dist)}\nUPDATE: {up_txt}"
 
             self.canvas.after(step_delay, lambda: do_step(step+1))
 
