@@ -32,6 +32,7 @@ class Controller:
         self._node_pins = {} # TO mark Origin And Destination
         self._r_final = 24
         self.mode = PaintMode.DRAW
+        self._pivot_ring_id = None
         self.selected_origin = None
         self.selected_destination = None
 
@@ -305,6 +306,7 @@ class Controller:
 
         def do_step(step):
             if step >= steps:
+                self._clear_pivot_ring()
                 return finish()
 
             best = None
@@ -328,7 +330,8 @@ class Controller:
             if best:
                 pivot, dist, prev = best[0], best[1], best[2]
                 self._highlight_node(pivot, fill="red", outline="purple", width=3)
-
+                self._draw_pivot_ring(pivot, color="#7f1dff", width=6, padding=6)
+                #self._highlight_node(pivot, fill="#7f1dff", outline="purple", width=3)
                 if prev and prev != pivot and prev in self._node_items:
                     _ = self._highlight_edge(prev, pivot, color="#ffcc00", width=3, tag="anim_edge")
 
@@ -447,6 +450,44 @@ class Controller:
 
         if hide_label:
             self.canvas.itemconfigure(tid, state="hidden")
+
+    def _draw_pivot_ring(self, name, color="#7f1dff", width=6, padding=10):
+        if self._pivot_ring_id:
+            try:
+                self.canvas.delete(self._pivot_ring_id)
+            except:
+                pass
+            self._pivot_ring_id = None
+
+        if name not in self._node_items:
+            return
+
+        oid, _ = self._node_items[name]
+        x0, y0, x1, y1 = self.canvas.coords(oid)
+
+        x0 -= padding
+        y0 -= padding
+        x1 += padding
+        y1 += padding
+
+        self._pivot_ring_id = self.canvas.create_oval(
+            x0, y0, x1, y1,
+            outline=color,
+            width=width,
+            fill="",                
+            tags=("pivot_ring",)
+        )
+
+        self.canvas.tag_raise(self._pivot_ring_id)   
+        self.canvas.tag_raise("pin")                 
+
+    def _clear_pivot_ring(self):
+        if self._pivot_ring_id:
+            try:
+                self.canvas.delete(self._pivot_ring_id)
+            except:
+                pass
+            self._pivot_ring_id = None
 
 
     def clearCanvas(self):
