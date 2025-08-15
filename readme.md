@@ -6,17 +6,19 @@
 <br>
 :construction: Status of project :construction:
 <br><br>
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+**TikTokVisualDijkstra** is an interactive visual application built with **Python** and **Tkinter** that allows you to load graphs from `.json` files and watch a step-by-step execution of the **Dijkstra algorithm**.  
+This project is designed for educational purposes, providing a graphical demonstration of how nodes are selected, how distances are updated, and how the shortest path between an origin and a destination is determined.
+
 
 Based on: https://github.com/felipedelosh/PythonDataStructures/tree/main
 
 ## :hammer:Funtions:
 
-- `Function 1`: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.<br>
-- `Function 2`: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.<br>
-- `Function 3`: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.<br>
-- `Function 3a`: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.<br>
-- `Function 4`: Neque porro quisquam est qui dolorem ipsum quia dolor sit amet.<br>
+- `Function 1`: Allows selecting and loading a graph defined in a JSON file, including nodes with coordinates and weighted edges.<br>
+- `Function 2`: Displays an animation of nodes appearing on screen before starting interaction.<br>
+- `Function 3`: Use the mouse to choose an origin and destination node, with visual highlights.<br>
+- `Function 4`: Step-by-step visualization of node selection and distance updates, including blinking effects on updated nodes.<br>
+- `Function 5`: Highlights the shortest path found between the origin and destination in a distinct color..<br>
 
 
 ## :play_or_pause_button:How to execute a project
@@ -31,7 +33,7 @@ Double click in "main.py"
 
 ## :warning:Warning.
 
-- Develop in windows.
+- Developed and tested on Windows.
 
 ## Autor
 
