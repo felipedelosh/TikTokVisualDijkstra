@@ -3,6 +3,7 @@ FelipedelosH
 2025
 """
 import os
+import time
 from os import scandir
 import math
 import json
@@ -282,25 +283,37 @@ class Controller:
                 self.animateDijkstra()
             ))
 
-    
     def animateDijkstra(self):
-        _dijkstraTable = self.graph.getDijkstraTable(self.selected_origin)
-        _qtyCols = len(next(iter(_dijkstraTable.values())))
-        _visited = []
+        table = self.graph.getDijkstraTable(self.selected_origin)
+        if not table:
+            return
 
-        for step in range(_qtyCols):
+        steps = len(next(iter(table.values())))
+        visited = []
+        step_delay = 1200 
+        blink_delay = 350
+
+        self.canvas.delete("anim_edge")
+        self.textMessageToDisplay = "Running Dijkstra…"
+        time.sleep(1)
+        
+
+        def do_step(step):
+            if step >= steps:
+                return finish()
+
             best = None
-            for nodo, cols in _dijkstraTable.items():
-                if nodo in _visited:
+            for nodo, cols in table.items():
+                if nodo in visited:
                     continue
                 val = cols[step]
-                if isinstance(val, tuple):          
+                if isinstance(val, tuple):
                     dist, prev = val
                     if (best is None) or (dist < best[1]):
                         best = (nodo, dist, prev)
 
             updates = []
-            for nodo, cols in _dijkstraTable.items():
+            for nodo, cols in table.items():
                 cur = cols[step]
                 prev = cols[step-1] if step > 0 else None
                 if isinstance(cur, tuple) and cur != prev:
@@ -308,12 +321,55 @@ class Controller:
                     updates.append((nodo, d, p))
 
             if best:
-                print(f"Paso {step}: visita {best[0]} (dist={best[1]}, prev={best[2]})")
-                if updates:
-                    print("actualizados:", ", ".join(f"{n}={d} via {p}" for n, d, p in updates))
-                _visited.append(best[0])
-            else:
-                break
+                pivot, dist, prev = best[0], best[1], best[2]
+                self._highlight_node(pivot, fill="red", outline="purple", width=3)
+
+                if prev and prev != pivot and prev in self._node_items:
+                    _ = self._highlight_edge(prev, pivot, color="#ffcc00", width=3, tag="anim_edge")
+
+                def blink_updates(on=True, left=2):
+                    for n, _, _ in updates:
+                        self._highlight_node(n,
+                            fill=("#00ccff" if on else "blue"),
+                            outline=("#00a0cc" if on else "#333333"),
+                            width=(3 if on else 2)
+                        )
+                    if left > 0:
+                        self.canvas.after(blink_delay, lambda: blink_updates(not on, left-1))
+
+                blink_updates(on=True, left=2)
+
+                visited.append(pivot)
+
+                up_txt = ", ".join(f"{n}" for n,_,_ in updates) or "—"
+                self.textMessageToDisplay = f"Step {step}: visit {pivot} (d={dist}) • updates: {up_txt}"
+
+            self.canvas.after(step_delay, lambda: do_step(step+1))
+
+        def finish():
+            if self.selected_destination:
+                path = self.graph.getBestRoute(self.selected_origin, self.selected_destination)
+                if path and len(path) > 1:
+                    self.canvas.delete("anim_edge")
+                    for i in range(len(path)-1):
+                        self._highlight_edge(path[i], path[i+1], color="#00ff66", width=5, tag="anim_edge")
+                    self.textMessageToDisplay = f"Shortest path: {' → '.join(path)}"
+                else:
+                    self.textMessageToDisplay = "No path found."
+
+        do_step(0)
+
+    def _highlight_node(self, name, fill, outline, width):
+        oid, _ = self._node_items.get(name, (None, None))
+        if oid:
+            self.canvas.itemconfig(oid, fill=fill, outline=outline, width=width)
+
+    def _highlight_edge(self, a_name, b_name, color="#ffff00", width=4, tag="anim_edge"):
+        nodes = {n.name: n for n in self.graph.nodes}
+        a, b = nodes.get(a_name), nodes.get(b_name)
+        if not a or not b:
+            return None
+        return self.canvas.create_line(a.x, a.y, b.x, b.y, fill=color, width=width, tags=(tag,))
 
     def clearCanvas(self):
         self.canvas.delete("all")
