@@ -334,6 +334,8 @@ class Controller:
 
                 def blink_updates(on=True, left=2):
                     for n, _, _ in updates:
+                        if n == pivot:
+                            continue
                         self._highlight_node(n,
                             fill=("purple" if on else "blue"),
                             outline=("violet" if on else "#333333"),
