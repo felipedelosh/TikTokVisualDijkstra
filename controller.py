@@ -29,6 +29,7 @@ class Controller:
         self.w = 405
         self.h = 720
         self._node_items = {}
+        self._node_pins = {} # TO mark Origin And Destination
         self._r_final = 24
         self.mode = PaintMode.DRAW
         self.selected_origin = None
@@ -255,16 +256,18 @@ class Controller:
         if not picked_name:
             return 
     
-        # ONLY SELECT ONE ITEM
+        # ONLY SELECT ORGIN OR DESTINATIONS
         if not self.selected_origin:
             if self.selected_origin and self.selected_origin in self._node_items:
                 prev_oid, _ = self._node_items[self.selected_origin]
                 self.canvas.itemconfig(prev_oid, fill="blue", outline="#333333", width=2)
+                self._remove_pin(self.selected_origin)
 
             oid, _ = self._node_items[picked_name]
             self.canvas.itemconfig(oid, fill="#ffcc00", outline="#ffa500", width=3)
 
             self.selected_origin = picked_name
+            self._show_pin_on_node(self.selected_origin, color="#ff4d4d", size=20, hide_label=True)
             self.textMessageToDisplayTOP = f"Origin: {picked_name}. Now Select Destination..."
         else:
             if self.selected_origin == picked_name:
@@ -272,6 +275,7 @@ class Controller:
                 return
             
             self.selected_destination = picked_name
+            self._show_pin_on_node(self.selected_destination, color="#ca1313", size=20, hide_label=True)
             oid_dest, _ = self._node_items[self.selected_destination]
             self.canvas.itemconfig(oid_dest, fill="#00ccff", outline="#00a0cc", width=3)
 
@@ -371,6 +375,74 @@ class Controller:
         if not a or not b:
             return None
         return self.canvas.create_line(a.x, a.y, b.x, b.y, fill=color, width=width, tags=(tag,))
+    
+    def _remove_pin(self, name):
+        if name in self._node_pins:
+            for iid in self._node_pins[name]:
+                self.canvas.delete(iid)
+            del self._node_pins[name]
+
+    def _show_pin_on_node(self, name, color="#ff4d4d", size=20, hide_label=True):
+        if name not in self._node_items:
+            return
+        oid, tid = self._node_items[name]
+
+        size = size * 2.2
+
+        x0, y0, x1, y1 = self.canvas.coords(oid)
+        cx, cy = (x0 + x1) / 2.0, (y0 + y1) / 2.0
+
+        dx = size * 0.30   
+        dy = size * 0.30
+        cx -= dx
+        cy -= dy
+
+
+        r_head  = size * 0.38
+        head_dy = size * 0.10
+        hole_r  = r_head * 0.55
+
+        tri_y_base = cy + size * 0.05
+        tri_x_off  = r_head * 0.9
+        tri_y_tip  = cy + size * 0.45
+
+        tri = self.canvas.create_polygon(
+            cx - tri_x_off, tri_y_base,
+            cx + tri_x_off, tri_y_base,
+            cx,             tri_y_tip,
+            fill=color, outline=color, width=0,
+            tags=("pin", f"pin:{name}")
+        )
+
+        head = self.canvas.create_oval(
+            cx - r_head, cy - r_head - head_dy,
+            cx + r_head, cy + r_head - head_dy,
+            fill=color, outline=color,
+            tags=("pin", f"pin:{name}")
+        )
+
+        hole = self.canvas.create_oval(
+            cx - hole_r, cy - hole_r - head_dy,
+            cx + hole_r, cy + hole_r - head_dy,
+            fill="white", outline="",
+            tags=("pin", f"pin:{name}")
+        )
+
+        pinLabel = self.canvas.create_text(
+            cx,
+            cy - head_dy,
+            text=name,
+            fill="black",
+            tags=("pin", f"pin:{name}")
+        )
+
+        self._node_pins[name] = [tri, head, hole, pinLabel]
+        self.canvas.tag_raise("pin")
+        self.canvas.tag_raise(f"pin:{name}")
+
+        if hide_label:
+            self.canvas.itemconfigure(tid, state="hidden")
+
 
     def clearCanvas(self):
         self.canvas.delete("all")
