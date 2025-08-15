@@ -349,7 +349,10 @@ class Controller:
                 visited.append(pivot)
 
                 up_txt = ", ".join(f"{n}" for n,_,_ in updates) or ""
-                self.textMessageToDisplayBOTTOM = f"STEP: {step}\nNODE: {pivot}\nDistance: {int(dist)}\nUPDATE: {up_txt}"
+                msm = f"step: {step+1} of {steps}\n"
+                msm = msm + f"node: {pivot} → {up_txt}\n"
+                msm = msm + f"distance: {int(dist)}\n"
+                self.textMessageToDisplayBOTTOM = msm
 
             self.canvas.after(step_delay, lambda: do_step(step+1))
 
