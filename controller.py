@@ -16,7 +16,7 @@ class PaintMode(Enum):
     ANIMATION_INTRO = auto()
     DRAW = auto()
     ANIMATION_DIJKSTRA = auto()
-
+    FINAL_VIEW = auto()
 
 class Controller:
     def __init__(self, canvas):
@@ -30,12 +30,12 @@ class Controller:
         self.h = 720
         self._node_items = {}
         self._node_pins = {} # TO mark Origin And Destination
+        self._last_path = None # Save Dijkstra Result
         self._r_final = 24
         self.mode = PaintMode.DRAW
         self._pivot_ring_id = None
         self.selected_origin = None
         self.selected_destination = None
-
 
     def getWindowSize(self):
         return f"{self.w}x{self.h}"
@@ -93,6 +93,11 @@ class Controller:
         elif self.mode == PaintMode.ANIMATION_DIJKSTRA:
             self.animateDijkstra()
             return True
+        elif self.mode == PaintMode.FINAL_VIEW:
+            if self._last_path:
+                self._render_final_view(self._last_path)
+                return True
+            return False
         return False
         
     def animateIntro(self, duration_ms=900, steps=45):
@@ -176,7 +181,6 @@ class Controller:
 
                 dibujadas.add(key)
         
-
     def drawGraph(self):
         """
         Draw NAME(x, y)
@@ -360,17 +364,47 @@ class Controller:
             self.canvas.after(step_delay, lambda: do_step(step+1))
 
         def finish():
+            self._clear_pivot_ring()
+            path = None
             if self.selected_destination:
                 path = self.graph.getBestRoute(self.selected_origin, self.selected_destination)
-                if path and len(path) > 1:
-                    self.canvas.delete("anim_edge")
-                    for i in range(len(path)-1):
-                        self._highlight_edge(path[i], path[i+1], color="#00ff66", width=5, tag="anim_edge")
-                    self.textMessageToDisplayTOP = f"Shortest path: {' → '.join(path)}"
-                else:
-                    self.textMessageToDisplayTOP = "No path found."
+
+            if path and len(path) > 1:
+                self._last_path = path
+                self.set_mode(PaintMode.FINAL_VIEW)
+                self.render()
+                self.textMessageToDisplayTOP = f"Shortest path: {' → '.join(path)}"
+            else:
+                self._last_path = None
+                self.clearCanvas()
+                self.drawGraph()
+                if self.selected_origin:
+                    self._show_pin_on_node(self.selected_origin, color="#ff4d4d", size=20, hide_label=True)
+                if self.selected_destination:
+                    self._show_pin_on_node(self.selected_destination, color="#ca1313", size=20, hide_label=True)
+                self.textMessageToDisplayTOP = "No path found."
 
         do_step(0)
+
+    def _render_final_view(self, path):
+        self._clear_pivot_ring()
+        self.canvas.delete("anim_edge")
+        self.clearCanvas()
+
+        for i in range(len(path) - 1):
+            self._highlight_edge(path[i], path[i+1], color="#00ff66", width=5, tag="final_path")
+
+        self.drawGraph()
+
+        self.canvas.tag_raise("final_path")
+        self.canvas.tag_raise("node")
+        self.canvas.tag_raise("label")
+        self.canvas.tag_raise("pin") 
+
+        if self.selected_origin:
+            self._show_pin_on_node(self.selected_origin, color="#ff4d4d", size=20, hide_label=True)
+        if self.selected_destination:
+            self._show_pin_on_node(self.selected_destination, color="#ca1313", size=20, hide_label=True)
 
     def _highlight_node(self, name, fill, outline, width):
         oid, _ = self._node_items.get(name, (None, None))
