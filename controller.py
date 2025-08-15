@@ -330,7 +330,7 @@ class Controller:
             if best:
                 pivot, dist, prev = best[0], best[1], best[2]
                 self._highlight_node(pivot, fill="red", outline="purple", width=3)
-                self._draw_pivot_ring(pivot, color="#7f1dff", width=6, padding=6)
+                self._draw_pivot_ring(pivot, color="#7f1dff", width=6, padding=14)
                 #self._highlight_node(pivot, fill="#7f1dff", outline="purple", width=3)
                 if prev and prev != pivot and prev in self._node_items:
                     _ = self._highlight_edge(prev, pivot, color="#ffcc00", width=3, tag="anim_edge")
